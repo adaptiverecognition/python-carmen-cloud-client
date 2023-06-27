@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  TEST_DEV_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_DEV }}
+  TEST_EU_PROD_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_PROD }}
+  TEST_US_PROD_API_KEY: ${{ secrets.API_TEST_US_API_KEY_PROD }}
+  TEST_DEV_ENDPOINT_URL: ${{ secrets.TEST_DEV_ENDPOINT_URL }}
+
 jobs:
   build:
 

@@ -14,8 +14,6 @@ endpoint = os.getenv("TEST_DEV_ENDPOINT_URL", "")
 eu_prod_api_key = os.getenv("TEST_EU_PROD_API_KEY", "")
 us_prod_api_key = os.getenv("TEST_US_PROD_API_KEY", "")
 
-raise Exception(f"{api_key=}, {endpoint=}, {eu_prod_api_key=}, {us_prod_api_key=}")
-
 test_options = TransportAPIOptions(
     api_key=api_key,
     type=CodeType.ACCR_USA,
