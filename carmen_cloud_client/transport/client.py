@@ -19,7 +19,7 @@ class TransportAPIClient:
 
     Args:
         options (TransportAPIOptions): An instance of TransportAPIOptions containing
-            the necessary options for the API request.
+            the necessary options for the API  request.
 
     Raises:
         TransportAPIConfigError: If the provided options are invalid.
