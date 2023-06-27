@@ -1,0 +1,35 @@
+name: Python project CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        activate-environment: myenv
+        environment-file: environment.yml
+        mamba-version: "*"
+        auto-activate-base: false
+
+    - name: Install dependencies
+      shell: bash -l {0}
+      run: |
+        echo "Installing dependencies"
+        mamba install --file environment.yml
+
+    - name: Run tests
+      shell: bash -l {0}
+      run: |
+        echo "Running tests"
+        pytest
