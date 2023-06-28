@@ -1,15 +1,33 @@
 from dataclasses import dataclass
 from typing import Optional, Tuple
 from enum import Enum
+from ..errors import CarmenAPIConfigError
 
-@dataclass
+@dataclass(frozen=True)
 class SelectedServices:
     """
-    Specifies the recognition services to call on the input image.
+    Specifies the recognition services to call on the input image. At least one
+    service must be selected.
+
+    Attributes
+    ----------
+    anpr : Optional[bool]
+        True if ANPR (Automatic Number Plate Recognition) should be performed
+        on the input image, False otherwise.
+    mmr : Optional[bool]
+        True if MMR (Make and Model Recognition) should be performed on the input
+        image, False otherwise.
+    adr : Optional[bool]
+        True if ADR (Dangerous Goods plate recognition) should be performed on
+        the input image, False otherwise.
     """
-    anpr: Optional[bool] = True
-    mmr: Optional[bool] = True
+    anpr: Optional[bool] = False
+    mmr: Optional[bool] = False
     adr: Optional[bool] = False
+
+    def __post_init__(self):
+        if not any([self.anpr, self.mmr, self.adr]):
+            raise CarmenAPIConfigError("At least one service must be selected.")
 
 @dataclass
 class InputImageLocation:
@@ -25,10 +43,10 @@ class RegionOfInterest:
     Represents the region of interest to be analyzed in the input image.
     The coordinates are given as `(x, y)` pairs.
     """
-    topLeft: Tuple[float, float]
-    topRight: Tuple[float, float]
-    bottomRight: Tuple[float, float]
-    bottomLeft: Tuple[float, float]
+    top_left: Tuple[float, float]
+    top_right: Tuple[float, float]
+    bottom_right: Tuple[float, float]
+    bottom_left: Tuple[float, float]
 
 class Europe:
     Hungary = InputImageLocation(region="EUR", location="HUN")
@@ -265,3 +283,83 @@ class Locations:
     SouthAsia = SouthAsia
     MiddleEast = MiddleEast
     AustraliaAndOceania = AustraliaAndOceania
+
+class CloudServiceRegion(Enum):
+    """
+    The cloud service region to use for the request.
+    """
+    EU = "EU"
+    US = "US"
+
+@dataclass
+class VehicleAPIOptions:
+    """
+    An object containing configuration options for the Vehicle API client.
+
+    Attributes
+    ----------
+    api_key : str
+        The API key to be used for authentication.
+    endpoint : Optional[str]
+        The URL of the API endpoint to call. Optional if `cloud_service_region`
+        is also set. Overrides `cloud_service_region` if both properties are set.
+    cloud_service_region : Optional[CloudServiceRegion]
+        The cloud service region to use - `"EU"` for Europe and `"US"` for the
+        United States. Has no effect if `endpoint` is also set.
+    input_image_location : InputImageLocation
+        The expected geographic region of the license plates in the uploaded image.
+        You can either use one of the presets in the `Locations` object or provide
+        your own settings in an `InputImageLocation(region="", location="")` object.
+        `region` is required but `location` is optional.
+    region_of_interest : Optional[RegionOfInterest]
+        The region of interest in the image to be analyzed.
+    services : SelectedServices
+        The services to use. At least one of `anpr` (Automated Number Plate
+        Recognition), `mmr` (Make and Model Recognition) and `adr` (Dangerous Goods
+        Pictogram Recognition) must be specified.
+    disable_call_statistics : Optional[bool] = False
+        The service uses your call statistics, which were generated based on the
+        list of locations (countries and states) determined when reading your
+        previously sent images, to decide which ANPR engines should be run when
+        processing your uploaded images. If you want the service to ignore your call
+        statistics, for example because you use the service with images from
+        different locations around the world, you can turn this feature off by
+        setting the property value to `true`.
+    disable_image_resizing : Optional[bool] = False
+        The service resizes large images to Full HD resolution by bicubic
+        interpolation. Resizing can make reading many times faster, but it can reduce
+        the recognition efficiency. If you don't want the service to resize your
+        images, turn this feature on by setting the property value to `true`. By
+        disabling image resizing, you may also need to enable wide range analysis.
+    enable_wide_range_analysis : Optional[bool] = False
+        If you cannot guarantee that the uploaded image meets all the required
+        parameters (see the Input Images tab on the How To Use page), you can turn
+        on the wide-range analysis by setting this property's value to `true`.
+        Attention! The duration of the analysis may increase several times.
+    enable_unidentified_license_plate : Optional[bool] = False
+        If you want to receive text results read from unidentified license plate
+        types as well, you can turn this feature on by setting the property value to
+        true. Attention! The number of false positives can be much higher.
+    max_reads : Optional[int] = 1
+        An optional parameter, it specifies the maximum number of vehicle/license
+        plate searches per image. Use this parameter carefully, because every
+        search increases the processing time. The system will stop searching when
+        there is no more vehicle/license plate in the image, or the number of
+        searches reaches the value of `max_reads`. Its value is `1` by default,
+        the maximum is `5`.
+    retry_count : Optional[int] = 3
+        How many times the request should be retried in case of a 5XX response
+        status code. Default: 3.
+    """
+    api_key: str
+    input_image_location: InputImageLocation
+    services: SelectedServices
+    endpoint: Optional[str] = None
+    cloud_service_region: Optional[CloudServiceRegion] = None
+    region_of_interest: Optional[RegionOfInterest] = None
+    disable_call_statistics: Optional[bool] = False
+    disable_image_resizing: Optional[bool] = False
+    enable_wide_range_analysis: Optional[bool] = False
+    enable_unidentified_license_plate: Optional[bool] = False
+    max_reads: Optional[int] = 1
+    retry_count: Optional[int] = 3

@@ -1,6 +1,6 @@
 import pytest
 import os
-from carmen_cloud_client import TransportAPIClient, CodeType, TransportAPIOptions, CarmenAPIConfigError
+from carmen_cloud_client import TransportAPIClient, CodeType, TransportAPIOptions, CarmenAPIConfigError, InvalidImageError
 from dotenv import load_dotenv
 
 current_file_path = os.path.abspath(__file__)
@@ -19,10 +19,6 @@ test_options = TransportAPIOptions(
     type=CodeType.ACCR_USA,
     endpoint=endpoint
 )
-
-# @pytest.fixture(scope="module")
-# def client():
-#     return TransportAPIClient(test_options)
 
 def test_invalid_options_throws():
     invalid_options = TransportAPIOptions(
@@ -44,12 +40,12 @@ def test_maxreads_zero_throws():
 
 def test_empty_imagedataorpaths_throws():
     client = TransportAPIClient(test_options)
-    with pytest.raises(CarmenAPIConfigError):
+    with pytest.raises(InvalidImageError):
         client.send()
 
 def test_invalid_image_path_throws():
     client = TransportAPIClient(test_options)
-    with pytest.raises(CarmenAPIConfigError):
+    with pytest.raises(InvalidImageError):
         client.send("/invalid/path")
 
 def test_single_image_return_expected():
@@ -67,6 +63,7 @@ def test_single_image_returns_one_result():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "NFLZ049511"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 1
 
 def test_return_4_image_results_when_4_images_sent():
@@ -81,6 +78,7 @@ def test_return_4_image_results_when_4_images_sent():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "NFLZ049511"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_ACCR_USA_codes():
@@ -95,6 +93,7 @@ def test_can_read_ACCR_USA_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "NFLZ049511"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_BRA_codes():
@@ -113,6 +112,7 @@ def test_can_read_BRA_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "HFE0599760"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_chassis_codes():
@@ -131,6 +131,7 @@ def test_can_read_chassis_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "MAEC623857"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_ilu_codes():
@@ -149,6 +150,7 @@ def test_can_read_ilu_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "LKWA06011300WI1"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_iso_codes():
@@ -167,6 +169,7 @@ def test_can_read_iso_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "NOSU2463454SG2210"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_uic_codes():
@@ -185,6 +188,7 @@ def test_can_read_uic_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "818068616353"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
 def test_can_read_usdot_codes():
@@ -203,5 +207,6 @@ def test_can_read_usdot_codes():
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
     assert response.data.codes[0].code == "1201193"
+    assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 

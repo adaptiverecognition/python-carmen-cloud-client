@@ -7,7 +7,7 @@ from typing import List, Union
 from io import BytesIO
 from requests.exceptions import RetryError
 from urllib.parse import urljoin
-from carmen_cloud_client.errors import CarmenAPIConfigError
+from carmen_cloud_client.errors import CarmenAPIConfigError, InvalidImageError
 from .options import TransportAPIOptions
 from .response import TransportationCargoApiResponse
 
@@ -24,6 +24,9 @@ class TransportAPIClient:
     Raises:
         TransportAPIConfigError: If the provided options are invalid.
     """
+
+    supported_api_version: str = "1.0"
+
     def __init__(self, options: TransportAPIOptions):
         self.options = options
         self.validate_options()
@@ -45,7 +48,7 @@ class TransportAPIClient:
                 request fails.
         """
         if not image_data_or_paths:
-            raise CarmenAPIConfigError("At least one image must be specified.")
+            raise InvalidImageError("At least one image must be specified.")
 
         form_data = self.create_form_data(list(image_data_or_paths))
         headers = self.create_headers(form_data.content_type)
@@ -67,7 +70,6 @@ class TransportAPIClient:
         except RetryError as e:
             raise CarmenAPIConfigError(f"Failed to send request after {self.options.retry_count} retries: {e}")
 
-
         return TransportationCargoApiResponse.parse_obj(response.json())
 
     def validate_options(self):
@@ -81,7 +83,7 @@ class TransportAPIClient:
             with open(image_data_or_path, "rb") as f:
                 return BytesIO(f.read())
         else:
-            raise CarmenAPIConfigError(f"Argument must be either a valid file path, BytesIO or bytes, but was: '{image_data_or_path}'.")
+            raise InvalidImageError(f"Argument must be either a valid file path, BytesIO or bytes, but was: '{image_data_or_path}'.")
 
     def create_headers(self, content_type) -> dict:
         headers = {
