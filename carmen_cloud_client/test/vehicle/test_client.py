@@ -4,6 +4,7 @@ import pytest
 import os
 from carmen_cloud_client import VehicleAPIClient, VehicleAPIOptions, SelectedServices, Locations, CarmenAPIConfigError, InvalidImageError, RegionOfInterest, CloudServiceRegion
 from dotenv import load_dotenv
+from carmen_cloud_client.test import extract_api_version_from_readme
 
 current_file_path = os.path.abspath(__file__)
 current_directory = os.path.dirname(current_file_path)
@@ -171,8 +172,11 @@ def test_has_a_package_version_that_matches_the_api_response_version():
     assert response.version is not None
     client_version = version.parse(client.supported_api_version + '.0')
     response_version = version.parse(response.version + '.0')
+    readme_version = version.parse(extract_api_version_from_readme("Vehicle API") + '.0')
     assert client_version.major == response_version.major
     assert client_version.minor == response_version.minor
+    assert client_version.major == readme_version.major
+    assert client_version.minor == readme_version.minor
 
 def test_works_correctly_if_cloudServiceRegion_is_EU():
     options = VehicleAPIOptions(

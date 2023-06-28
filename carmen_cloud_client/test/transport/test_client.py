@@ -1,7 +1,9 @@
 import pytest
 import os
+from packaging import version
 from carmen_cloud_client import TransportAPIClient, CodeType, TransportAPIOptions, CarmenAPIConfigError, InvalidImageError
 from dotenv import load_dotenv
+from carmen_cloud_client.test import extract_api_version_from_readme
 
 current_file_path = os.path.abspath(__file__)
 current_directory = os.path.dirname(current_file_path)
@@ -210,3 +212,19 @@ def test_can_read_usdot_codes():
     assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
+def test_has_a_package_version_that_matches_the_api_response_version():
+    client = TransportAPIClient(test_options)
+    response = client.send(
+        os.path.join(current_directory, "accr_usa01.jpg"),
+        os.path.join(current_directory, "accr_usa02.jpg"),
+        os.path.join(current_directory, "accr_usa03.jpg"),
+        os.path.join(current_directory, "accr_usa20.jpg"),
+    )
+    assert response.version is not None
+    client_version = version.parse(client.supported_api_version + '.0')
+    response_version = version.parse(response.version + '.0')
+    readme_version = version.parse(extract_api_version_from_readme("Transportation & Cargo API") + '.0')
+    assert client_version.major == response_version.major
+    assert client_version.minor == response_version.minor
+    assert client_version.major == readme_version.major
+    assert client_version.minor == readme_version.minor
