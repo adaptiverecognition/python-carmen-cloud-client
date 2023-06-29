@@ -30,9 +30,9 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements-dev.txt
-
-    - name: Run tests
-      shell: bash -l {0}
-      run: |
-        echo "Running tests"
         pytest
+
+    # - name: Run tests
+    #   shell: bash -l {0}
+    #   run: |
+    #     echo "Running tests"
