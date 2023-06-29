@@ -19,19 +19,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        miniconda-version: "latest"
-        activate-environment: myenv
-        environment-file: environment.yml
-        mamba-version: "*"
-        auto-activate-base: false
 
-    # - name: Install dependencies
-    #   run: |
-    #     echo "Installing dependencies"
-    #     mamba install --file environment.yml
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Set up Environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
 
     - name: Run tests
       shell: bash -l {0}
