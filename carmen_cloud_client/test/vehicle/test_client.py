@@ -24,11 +24,12 @@ test_options = VehicleAPIOptions(
     endpoint=endpoint
 )
 
-def test_endpoint_cloud_service_region_none_throws():
+def test_invalid_cloud_service_region_throws():
     invalid_options = VehicleAPIOptions(
         api_key=api_key,
         services=SelectedServices(anpr=True),
         input_image_location=Locations.Europe.Hungary,
+        cloud_service_region="INVALID",
     )
     with pytest.raises(CarmenAPIConfigError):
         VehicleAPIClient(invalid_options)

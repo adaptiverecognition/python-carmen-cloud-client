@@ -288,6 +288,7 @@ class CloudServiceRegion(Enum):
     """
     The cloud service region to use for the request.
     """
+    AUTO = "AUTO"
     EU = "EU"
     US = "US"
 

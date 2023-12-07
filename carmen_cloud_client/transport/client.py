@@ -25,7 +25,7 @@ class TransportAPIClient:
         TransportAPIConfigError: If the provided options are invalid.
     """
 
-    supported_api_version: str = "1.0"
+    supported_api_version: str = "1.0.1"
 
     def __init__(self, options: TransportAPIOptions):
         self.options = options
@@ -124,7 +124,9 @@ class TransportAPIClient:
         if self.options.endpoint:
             return self.options.endpoint
         if self.options.cloud_service_region == "EU":
-            return "https://api.cloud.adaptiverecognition.com"
+            return "https://eu-central-1.api.carmencloud.com"
         if self.options.cloud_service_region == "US":
-            return "https://api.us.cloud.adaptiverecognition.com"
-        raise CarmenAPIConfigError("Either 'endpoint' or 'cloud_service_region' must be specified.")
+            return "https://us-east-1.api.carmencloud.com"
+        if self.options.cloud_service_region == "AUTO" or self.options.cloud_service_region is None:
+            return "https://api.carmencloud.com" # latency-based routing
+        raise CarmenAPIConfigError(f"Invalid 'cloud_service_region': '{self.options.cloud_service_region}'.")

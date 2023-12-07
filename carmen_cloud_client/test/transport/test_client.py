@@ -26,6 +26,7 @@ def test_invalid_options_throws():
     invalid_options = TransportAPIOptions(
         api_key=api_key,
         type=CodeType.ACCR_USA,
+        cloud_service_region="INVALID",
     )
     with pytest.raises(CarmenAPIConfigError):
         TransportAPIClient(invalid_options)

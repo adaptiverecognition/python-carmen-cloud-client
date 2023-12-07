@@ -12,7 +12,7 @@ from .options import VehicleAPIOptions, CloudServiceRegion
 from .response import VehicleApiResponse
 
 class VehicleAPIClient:
-    supported_api_version: str = "1.4"
+    supported_api_version: str = "1.4.1"
 
     def __init__(self, options: VehicleAPIOptions):
         self.options = options
@@ -109,10 +109,12 @@ class VehicleAPIClient:
         if self.options.endpoint:
             return self.options.endpoint
         if self.options.cloud_service_region == "EU" or self.options.cloud_service_region == CloudServiceRegion.EU:
-            return "https://api.cloud.adaptiverecognition.com"
+            return "https://eu-central-1.api.carmencloud.com"
         if self.options.cloud_service_region == "US" or self.options.cloud_service_region == CloudServiceRegion.US:
-            return "https://api.us.cloud.adaptiverecognition.com"
-        raise CarmenAPIConfigError("Either 'endpoint' or 'cloud_service_region' must be specified.")
+            return "https://us-east-1.api.carmencloud.com"
+        if self.options.cloud_service_region == "AUTO" or self.options.cloud_service_region == CloudServiceRegion.AUTO or self.options.cloud_service_region is None:
+            return "https://api.carmencloud.com" # latency-based routing
+        raise CarmenAPIConfigError(f"Invalid 'cloud_service_region': '{self.options.cloud_service_region}'.")
 
     def get_parametrized_api_url(self) -> str:
         base_url = self.select_api_base_url()
