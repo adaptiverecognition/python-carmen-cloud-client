@@ -10,7 +10,7 @@ Python client for [Carmen Cloud](https://cloud.adaptiverecognition.com/) by [Ada
 ## 🛠️ How to Install
 
 ```sh
-pip install adaptive-recognition-carmen-cloud-client
+pip install carmen-cloud-client
 ```
 
 ## 🚀 Usage
