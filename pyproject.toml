@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "carmen_cloud_client"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
   { name="Botond BALÁZS", email="botond.balazs@arip.hu" },
 ]
