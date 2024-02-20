@@ -20,14 +20,15 @@ You can utilize either the Vehicle API or the Transportation & Cargo API based o
 ### 🚗 Vehicle API
 
 ```python
-from carmen_cloud_client import VehicleAPIClient, SelectedServices,  Locations
+from carmen_cloud_client import VehicleAPIClient, VehicleAPIOptions, SelectedServices, Locations
 
-client = VehicleAPIClient(
+options = VehicleAPIOptions(
     api_key="<YOUR_API_KEY>",
     services=SelectedServices(anpr=True, mmr=True),
     input_image_location=Locations.Europe.Hungary,
     cloud_service_region="EU"
 )
+client = VehicleAPIClient(options)
 
 response = client.send("./car.jpg")
 print(response)
@@ -36,13 +37,14 @@ print(response)
 ### 🚚 Transportation & Cargo API
 
 ```python
-from carmen_cloud_client import TransportAPIClient, CodeType
+from carmen_cloud_client import TransportAPIClient, TransportAPIOptions, CodeType
 
-client = TransportAPIClient(
+options = TransportAPIOptions(
     api_key="<YOUR_API_KEY>",
-    code_type=CodeType.ISO,
+    type=CodeType.ISO,
     cloud_service_region="EU"
 )
+client = TransportAPIClient(options)
 
 response = client.send("./container.jpg")
 print(response)
