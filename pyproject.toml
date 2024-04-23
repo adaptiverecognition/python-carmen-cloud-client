@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "carmen_cloud_client"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="Botond BALÁZS", email="botond.balazs@arip.hu" },
 ]
@@ -26,3 +26,7 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/adaptiverecognition/python-carmen-cloud-client"
 "Bug Tracker" = "https://github.com/adaptiverecognition/python-carmen-cloud-client/issues"
+
+[[tool.pydoc-markdown.loaders]]
+type = "python"
+search_path = [ "./carmen_cloud_client" ]
