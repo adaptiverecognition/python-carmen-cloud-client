@@ -50,6 +50,55 @@ response = client.send("./container.jpg")
 print(response)
 ```
 
+### 📦 Storage & Hook API
+
+```python
+from carmen_cloud_client import StorageAndHookAPIClient, StorageAndHookAPIOptions
+
+options = StorageAndHookAPIOptions(
+    api_key="<YOUR_API_KEY>",
+    cloud_service_region="EU"
+)
+client = StorageAndHookAPIClient(options)
+
+# List Events
+events = client.get_events("vehicle")
+print("events:", events)
+
+# Get Storage Status
+status = client.get_storage_status()
+print("status:", status)
+
+# Update Storage Status
+updated_status = client.update_storage_status(transport=True)
+print('updatedStatus:', updated_status)
+
+# Create Hook
+created_hook = client.create_hook(
+    hook_url='https://your-domain.com/your-hook-path',
+    apis=['vehicle', 'transport']
+)
+print('createdHook:', created_hook)
+
+# List Hooks
+hooks = client.get_hooks()
+print('hooks:', hooks)
+
+# Get Hook
+hook = client.get_hook('https://your-domain.com/your-hook-path')
+print('hook:', hook)
+
+# Update Hook
+updated_hook = client.update_hook(
+    'https://your-domain.com/your-hook-path',
+    vehicle=True, transport=True
+)
+print('updatedHook:', updated_hook)
+
+# Delete Hook
+client.delete_hook('https://your-domain.com/your-hook-path')
+```
+
 ## 🔧 Development
 
 For more information about developing and contributing to this project, see [DEVELOPMENT.md](DEVELOPMENT.md).
