@@ -1,4 +1,11 @@
 ```
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+
+pip install datamodel-code-generator
+./update-openapi-spec.sh
+./generate-response.sh
+
 python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade build
 python3 -m build

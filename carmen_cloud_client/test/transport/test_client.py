@@ -18,14 +18,14 @@ us_prod_api_key = os.getenv("TEST_US_PROD_API_KEY", "")
 
 test_options = TransportAPIOptions(
     api_key=api_key,
-    type=CodeType.ACCR_USA,
+    type=CodeType.TRUCK,
     endpoint=endpoint
 )
 
 def test_invalid_options_throws():
     invalid_options = TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.ACCR_USA,
+        type=CodeType.TRUCK,
         cloud_service_region="INVALID",
     )
     with pytest.raises(CarmenAPIConfigError):
@@ -34,7 +34,7 @@ def test_invalid_options_throws():
 def test_maxreads_zero_throws():
     invalid_options = TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.ACCR_USA,
+        type=CodeType.TRUCK,
         max_reads=0,
         endpoint=endpoint,
     )
@@ -84,7 +84,7 @@ def test_return_4_image_results_when_4_images_sent():
     assert response.data.codes[0].imageResults is not None
     assert len(response.data.codes[0].imageResults) == 4
 
-def test_can_read_ACCR_USA_codes():
+def test_can_read_TRUCK_codes():
     client = TransportAPIClient(test_options)
     response = client.send(
         os.path.join(current_directory, "accr_usa01.jpg"),
@@ -102,7 +102,7 @@ def test_can_read_ACCR_USA_codes():
 def test_can_read_BRA_codes():
     client = TransportAPIClient(TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.BRA,
+        type=CodeType.AM_RAIL,
         endpoint=endpoint
     ))
     response = client.send(
@@ -121,7 +121,7 @@ def test_can_read_BRA_codes():
 def test_can_read_chassis_codes():
     client = TransportAPIClient(TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.CHASSIS,
+        type=CodeType.TRUCK,
         endpoint=endpoint
     ))
     response = client.send(
@@ -140,21 +140,20 @@ def test_can_read_chassis_codes():
 def test_can_read_ilu_codes():
     client = TransportAPIClient(TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.ILU,
+        type=CodeType.ISO,
         endpoint=endpoint
     ))
     response = client.send(
         os.path.join(current_directory, "ilu01.jpg"),
         os.path.join(current_directory, "ilu02.jpg"),
         os.path.join(current_directory, "ilu03.jpg"),
-        os.path.join(current_directory, "ilu20.jpg"),
     )
     assert response.data is not None
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
-    assert response.data.codes[0].code == "LKWA06011300WI1"
+    assert response.data.codes[0].code == "REID0008406"
     assert response.data.codes[0].imageResults is not None
-    assert len(response.data.codes[0].imageResults) == 4
+    assert len(response.data.codes[0].imageResults) == 3
 
 def test_can_read_iso_codes():
     client = TransportAPIClient(TransportAPIOptions(
@@ -164,21 +163,18 @@ def test_can_read_iso_codes():
     ))
     response = client.send(
         os.path.join(current_directory, "iso01.jpg"),
-        os.path.join(current_directory, "iso02.jpg"),
-        os.path.join(current_directory, "iso03.jpg"),
-        os.path.join(current_directory, "iso20.jpg"),
     )
     assert response.data is not None
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
-    assert response.data.codes[0].code == "NOSU2463454SG2210"
+    assert response.data.codes[0].code == "TCKU387869122G1"
     assert response.data.codes[0].imageResults is not None
-    assert len(response.data.codes[0].imageResults) == 4
+    assert len(response.data.codes[0].imageResults) == 1
 
 def test_can_read_uic_codes():
     client = TransportAPIClient(TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.UIC,
+        type=CodeType.EU_RAIL,
         endpoint=endpoint
     ))
     response = client.send(
@@ -197,21 +193,18 @@ def test_can_read_uic_codes():
 def test_can_read_usdot_codes():
     client = TransportAPIClient(TransportAPIOptions(
         api_key=api_key,
-        type=CodeType.USDOT,
+        type=CodeType.TRUCK,
         endpoint=endpoint
     ))
     response = client.send(
         os.path.join(current_directory, "usdot01.jpg"),
-        os.path.join(current_directory, "usdot02.jpg"),
-        os.path.join(current_directory, "usdot03.jpg"),
-        os.path.join(current_directory, "usdot20.jpg"),
     )
     assert response.data is not None
     assert response.data.codes is not None
     assert len(response.data.codes) == 1
-    assert response.data.codes[0].code == "1201193"
+    assert response.data.codes[0].code == "USDOT95406"
     assert response.data.codes[0].imageResults is not None
-    assert len(response.data.codes[0].imageResults) == 4
+    assert len(response.data.codes[0].imageResults) == 1
 
 def test_has_a_package_version_that_matches_the_api_response_version():
     client = TransportAPIClient(test_options)
@@ -219,12 +212,11 @@ def test_has_a_package_version_that_matches_the_api_response_version():
         os.path.join(current_directory, "accr_usa01.jpg"),
         os.path.join(current_directory, "accr_usa02.jpg"),
         os.path.join(current_directory, "accr_usa03.jpg"),
-        os.path.join(current_directory, "accr_usa20.jpg"),
     )
     assert response.version is not None
-    client_version = version.parse(client.supported_api_version + '.0')
-    response_version = version.parse(response.version + '.0')
-    readme_version = version.parse(extract_api_version_from_readme("Transportation & Cargo API") + '.0')
+    client_version = version.parse(client.supported_api_version)
+    response_version = version.parse(response.version)
+    readme_version = version.parse(extract_api_version_from_readme("Transportation & Cargo API"))
     assert client_version.major == response_version.major
     assert client_version.minor == response_version.minor
     assert client_version.major == readme_version.major
