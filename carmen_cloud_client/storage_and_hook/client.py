@@ -33,7 +33,7 @@ class StorageAndHookAPIClient:
     def get_events(self, api: APIName, filters: EventFilters) -> EventsResponse:
         query_params = {
             'limit': filters.limit,
-            'order': filters.order.value if filters.order else None,  # Assuming SortOrder is an Enum
+            'order': filters.order.value if filters.order else None,
             'continuation-token': filters.continuation_token,
             'before': filters.before,
             'after': filters.after
