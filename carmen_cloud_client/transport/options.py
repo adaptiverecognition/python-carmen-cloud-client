@@ -6,16 +6,10 @@ class CodeType(Enum):
     """
     The type of code to read.
     """
-    ACCR_USA = "accr_usa"
-    ILU = "ilu"
     ISO = "iso"
-    MOCO = "moco"
-    BRA = "bra"
-    RUS = "rus"
-    UIC = "uic"
-    AAR = "aar"
-    CHASSIS = "chassis"
-    USDOT = "usdot"
+    TRUCK = "truck"
+    AM_RAIL = "am-rail"
+    EU_RAIL = "eu-rail"
 
 @dataclass
 class TransportAPIOptions:

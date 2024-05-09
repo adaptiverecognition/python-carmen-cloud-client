@@ -4,8 +4,8 @@ Python client for [Carmen Cloud](https://carmencloud.com/) by [Adaptive Recognit
 
 ## Supported API Versions
 
-- Vehicle API: v1.4
-- Transportation & Cargo API: v1.0
+- Vehicle API: v1.4.1
+- Transportation & Cargo API: v1.0.1
 
 ## 🛠️ How to Install
 
