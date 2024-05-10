@@ -53,7 +53,15 @@ print(response)
 ### 📦 Storage & Hook API
 
 ```python
-from carmen_cloud_client import StorageAndHookAPIClient, StorageAndHookAPIOptions
+from carmen_cloud_client import (
+    APIName,
+    CreateHookRequest,
+    EventFilters,
+    StorageAndHookAPIClient,
+    StorageAndHookAPIOptions,
+    StorageStatusRequest,
+    UpdateHookRequest,
+)
 
 options = StorageAndHookAPIOptions(
     api_key="<YOUR_API_KEY>",
@@ -62,7 +70,8 @@ options = StorageAndHookAPIOptions(
 client = StorageAndHookAPIClient(options)
 
 # List Events
-events = client.get_events("vehicle")
+filters = EventFilters(limit=5)
+events = client.get_events(APIName.Vehicle, filters)
 print("events:", events)
 
 # Get Storage Status
@@ -70,14 +79,16 @@ status = client.get_storage_status()
 print("status:", status)
 
 # Update Storage Status
-updated_status = client.update_storage_status(transport=True)
+apis = StorageStatusRequest(vehicle=True, transport=False)
+updated_status = client.update_storage_status(apis)
 print('updatedStatus:', updated_status)
 
 # Create Hook
-created_hook = client.create_hook(
-    hook_url='https://your-domain.com/your-hook-path',
-    apis=['vehicle', 'transport']
+hook = CreateHookRequest(
+    hookUrl='http://request-logger.botond.online',
+    apis=Apis(vehicle=True, transport=False)
 )
+created_hook = client.create_hook(hook)
 print('createdHook:', created_hook)
 
 # List Hooks
@@ -91,7 +102,7 @@ print('hook:', hook)
 # Update Hook
 updated_hook = client.update_hook(
     'https://your-domain.com/your-hook-path',
-    vehicle=True, transport=True
+    UpdateHookRequest(vehicle=True, transport=True)
 )
 print('updatedHook:', updated_hook)
 

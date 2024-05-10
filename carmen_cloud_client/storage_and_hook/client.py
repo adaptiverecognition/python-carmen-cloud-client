@@ -8,8 +8,14 @@ from requests.exceptions import RetryError
 from urllib.parse import urljoin, urlencode
 from carmen_cloud_client.errors import CarmenAPIConfigError, CarmenAPIError
 from carmen_cloud_client.storage_and_hook.events_response import EventsResponse
+from carmen_cloud_client.storage_and_hook.storage_status_response import StorageStatusResponse
+from carmen_cloud_client.storage_and_hook.api_storage_status_request import StorageStatusRequest
+from carmen_cloud_client.storage_and_hook.hook import Hook
+from carmen_cloud_client.storage_and_hook.create_hook_request import CreateHookRequest
+from carmen_cloud_client.storage_and_hook.update_hook_request import UpdateHookRequest
 from .options import APIName, EventFilters, StorageAndHookAPIOptions
 from ..models import CloudServiceRegion
+from ..utils import url_concat, url_encode
 
 class StorageAndHookAPIClient:
     """
@@ -39,18 +45,126 @@ class StorageAndHookAPIClient:
             'after': filters.after
         }
         query_params = {k: v for k, v in query_params.items() if v is not None}
+        headers = self.create_headers()
 
-        base_url = urljoin(self.api_url, f'/events/{api}')
+        base_url = url_concat(self.api_url, f'/events/{api.value}')
         url = f"{base_url}?{urlencode(query_params)}"
 
         response = None
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, headers=headers)
             response.raise_for_status()
         except RetryError as e:
             raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
 
         return EventsResponse.parse_obj(response.json())
+
+    def get_storage_status(self) -> StorageStatusResponse:
+        headers = self.create_headers()
+
+        url = url_concat(self.api_url, '/status')
+
+        response = None
+        try:
+            response = self.session.get(url, headers=headers)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return StorageStatusResponse.parse_obj(response.json())
+
+    def update_storage_status(self, apis: StorageStatusRequest) -> StorageStatusResponse:
+        headers = self.create_headers()
+
+        url = url_concat(self.api_url, '/status')
+
+        response = None
+        try:
+            response = self.session.patch(url, headers=headers, json=apis.__dict__)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return StorageStatusResponse.parse_obj(response.json())
+
+    def get_hooks(self) -> list[Hook]:
+        headers = self.create_headers()
+        url = url_concat(self.api_url, f'/hooks')
+
+        response = None
+        try:
+            response = self.session.get(url, headers=headers)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return [Hook.parse_obj(hook) for hook in response.json()]
+
+    def get_hook(self, hook_url: str) -> Hook:
+        headers = self.create_headers()
+        url = url_concat(self.api_url, f'/hooks/{url_encode(hook_url)}')
+
+        response = None
+        try:
+            response = self.session.get(url, headers=headers)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return Hook.parse_obj(response.json())
+
+    def create_hook(self, hook: CreateHookRequest) -> Hook:
+        headers = self.create_headers()
+        url = url_concat(self.api_url, '/hooks')
+        payload = {
+            'hookUrl': hook.hookUrl,
+            'apis': {
+                'vehicle': hook.apis.vehicle,
+                'transport': hook.apis.transport,
+            }
+        }
+
+        response = None
+        try:
+            response = self.session.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return Hook.parse_obj(response.json())
+
+    def update_hook(self, hook_url: str, apis: UpdateHookRequest) -> Hook:
+        headers = self.create_headers()
+        url = url_concat(self.api_url, f'/hooks/{url_encode(hook_url)}')
+        payload = {
+            'vehicle': apis.vehicle,
+            'transport': apis.transport,
+        }
+
+        response = None
+        try:
+            response = self.session.patch(url, headers=headers, json=payload)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+        return Hook.parse_obj(response.json())
+
+    def delete_hook(self, hook_url: str):
+        headers = self.create_headers()
+        url = url_concat(self.api_url, f'/hooks/{url_encode(hook_url)}')
+
+        response = None
+        try:
+            response = self.session.delete(url, headers=headers)
+            response.raise_for_status()
+        except RetryError as e:
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+
+    def create_headers(self):
+        return {
+            "X-Api-Key": self.options.api_key
+        }
 
     def select_api_base_url(self) -> str:
         if self.options.endpoint:
@@ -65,4 +179,4 @@ class StorageAndHookAPIClient:
 
     def get_parametrized_api_url(self) -> str:
         base_url = self.select_api_base_url()
-        return urljoin(base_url, f"/storage")
+        return url_concat(base_url, "/storage")
