@@ -1,11 +1,12 @@
 # Carmen Cloud Client by Adaptive Recognition
 
-Python client for [Carmen Cloud](https://carmencloud.com/) by [Adaptive Recognition](https://adaptiverecognition.com/). This unified library provides you with access to both the **Vehicle API** and the **Transportation & Cargo API**.
+Python client for [Carmen Cloud](https://carmencloud.com/) by [Adaptive Recognition](https://adaptiverecognition.com/). This unified library provides you with access to both the **Vehicle API** and the **Transportation & Cargo API**. You can also use it to automate configuring event storage and registering hooks via the **Storage & Hook API**.
 
 ## Supported API Versions
 
 - Vehicle API: v1.4.1
 - Transportation & Cargo API: v1.0.1
+- Storage & Hook API: current latest version
 
 ## 🛠️ How to Install
 
