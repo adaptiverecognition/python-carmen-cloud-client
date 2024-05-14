@@ -7,7 +7,7 @@ from typing import List, Union
 from io import BytesIO
 from requests.exceptions import RetryError
 from urllib.parse import urljoin
-from carmen_cloud_client.errors import CarmenAPIConfigError, InvalidImageError
+from carmen_cloud_client.errors import CarmenAPIConfigError, CarmenAPIError, InvalidImageError
 from .options import VehicleAPIOptions, CloudServiceRegion
 from .response import VehicleApiResponse
 
@@ -37,7 +37,7 @@ class VehicleAPIClient:
             response = session.post(self.api_url, headers=headers, data=form_data)
             response.raise_for_status()
         except RetryError as e:
-            raise CarmenAPIConfigError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
 
         return VehicleApiResponse.parse_obj(response.json())
 
