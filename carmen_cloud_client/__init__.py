@@ -26,6 +26,10 @@ from .storage_and_hook import (
     StorageStatusResponse,
     UpdateHookRequest,
 )
+from .descriptor import (
+    DescriptorAPIClient,
+    DescriptorAPIOptions,
+)
 
 from .models import CloudServiceRegion
 from .errors import CarmenAPIConfigError, InvalidImageError
