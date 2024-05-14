@@ -1,0 +1,33 @@
+{
+    "type": "object",
+    "title": "Usage Plan Quota Usage",
+    "description": "Quota usage data for the Usage Plans the authenticated user is a member of, between a start and end date. Property keys other than `startDate` and `endDate` are usage plan IDs.",
+    "properties": {
+        "startDate": {
+            "type": "string",
+            "format": "date"
+        },
+        "endDate": {
+            "type": "string",
+            "format": "date"
+        }
+    },
+    "patternProperties": {
+        "^[a-z0-9]+$": {
+            "type": "array",
+            "title": "Usage Plan Usage",
+            "description": "Quota Usage for a single Usage Plan. If the array is empty, the user hasn't used the usage plan in the current period, their entire quota is still available.",
+            "items": {
+                "type": "array",
+                "title": "Daily Quota Usage",
+                "description": "The first element contains the number of requests used, the second one contains the number of remaining requests for a specific day. Otherwise, it contains two-element arrays of numbers for each day in the current month. The first element is the number of requests used, the second element is the number of requests remaining from the quota on the day.",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                    "type": "number"
+                }
+            }
+        }
+    },
+    "required": ["startDate", "endDate"]
+}
