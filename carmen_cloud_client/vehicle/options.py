@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 from enum import Enum
 from ..errors import CarmenAPIConfigError
+from ..models import CloudServiceRegion
 
 @dataclass(frozen=True)
 class SelectedServices:
@@ -283,14 +284,6 @@ class Locations:
     SouthAsia = SouthAsia
     MiddleEast = MiddleEast
     AustraliaAndOceania = AustraliaAndOceania
-
-class CloudServiceRegion(Enum):
-    """
-    The cloud service region to use for the request.
-    """
-    AUTO = "AUTO"
-    EU = "EU"
-    US = "US"
 
 @dataclass
 class VehicleAPIOptions:
