@@ -247,16 +247,16 @@ class SouthAsia:
     KeelingIslands = InputImageLocation(region="sas", location="cck")
 
 class MiddleEast:
-    Syria = InputImageLocation(region="arab", location="syr")
-    Lebanon = InputImageLocation(region="arab", location="lbn")
-    Jordan = InputImageLocation(region="arab", location="jor")
-    SaudiArabia = InputImageLocation(region="arab", location="sau")
-    Kuwait = InputImageLocation(region="arab", location="kwt")
-    UnitedArabEmirates = InputImageLocation(region="arab", location="are")
-    Qatar = InputImageLocation(region="arab", location="qat")
-    Bahrain = InputImageLocation(region="arab", location="bhr")
-    Oman = InputImageLocation(region="arab", location="omn")
-    Yemen = InputImageLocation(region="arab", location="yem")
+    Syria = InputImageLocation(region="me", location="syr")
+    Lebanon = InputImageLocation(region="me", location="lbn")
+    Jordan = InputImageLocation(region="me", location="jor")
+    SaudiArabia = InputImageLocation(region="me", location="sau")
+    Kuwait = InputImageLocation(region="me", location="kwt")
+    UnitedArabEmirates = InputImageLocation(region="me", location="are")
+    Qatar = InputImageLocation(region="me", location="qat")
+    Bahrain = InputImageLocation(region="me", location="bhr")
+    Oman = InputImageLocation(region="me", location="omn")
+    Yemen = InputImageLocation(region="me", location="yem")
 
 class AustraliaAndOceania:
     AustraliaUnknown = InputImageLocation(region="aus", location="none")
