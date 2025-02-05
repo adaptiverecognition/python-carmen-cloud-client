@@ -241,7 +241,6 @@ class SouthAsia:
     Myanmar = InputImageLocation(region="sas", location="mmr")
     Laos = InputImageLocation(region="sas", location="lao")
     Cambodia = InputImageLocation(region="sas", location="khm")
-    Vietnam = InputImageLocation(region="sas", location="vnm")
     Brunei = InputImageLocation(region="sas", location="brn")
     ChristmasIsland = InputImageLocation(region="sas", location="cxr")
     KeelingIslands = InputImageLocation(region="sas", location="cck")
