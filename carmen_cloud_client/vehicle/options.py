@@ -245,6 +245,9 @@ class SouthAsia:
     Brunei = InputImageLocation(region="sas", location="brn")
     ChristmasIsland = InputImageLocation(region="sas", location="cxr")
     KeelingIslands = InputImageLocation(region="sas", location="cck")
+    Vietnam = InputImageLocation(region="sas", location="vnm")
+    Indonesia = InputImageLocation(region="sas", location="idn")
+    PapuaNewGuinea = InputImageLocation(region="sas", location="png")
 
 class MiddleEast:
     Syria = InputImageLocation(region="me", location="syr")
