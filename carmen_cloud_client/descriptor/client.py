@@ -1,6 +1,5 @@
 import os
 import requests
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from typing import List, Union
@@ -31,7 +30,7 @@ class DescriptorAPIClient:
         adapter = HTTPAdapter(max_retries=retry_strategy)
         self.session.mount("https://", adapter)
 
-    def get_apis(self, detailed=False, **kwargs) -> APIStages:
+    def get_apis(self, detailed=False, **kwargs) -> ApiStages:
         headers = self.create_headers()
         query_params = {
             'detailed': detailed,
@@ -47,7 +46,7 @@ class DescriptorAPIClient:
         except RetryError as e:
             raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
 
-        return Hook.parse_obj(response.json())
+        return ApiStages.parse_obj(response.json())
 
     def create_headers(self):
         return {
