@@ -14,6 +14,9 @@ from .vehicle import (
     VehicleApiResponse,
 )
 
+from .auth import AuthClient, AuthClientOptions
+from .carmen_cloud import CarmenCloudClient, CarmenCloudClientOptions
+
 from .models import CloudServiceRegion
 from .errors import CarmenAPIConfigError, CarmenAPIError, InvalidImageError
 

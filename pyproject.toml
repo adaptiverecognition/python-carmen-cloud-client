@@ -35,6 +35,8 @@ dev = [
     "pytest>=8",
     "python-dotenv>=1.0",
     "responses>=0.25",
+    "black",
+    "isort",
 ]
 
 [tool.hatch.build.targets.sdist]
