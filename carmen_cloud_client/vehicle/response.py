@@ -79,6 +79,12 @@ class Color(BaseModel):
     )
 
 
+class Dimensions(BaseModel):
+    width: int | None = Field(None, description='Vehicle width.')
+    height: int | None = Field(None, description='Vehicle height.')
+    length: int | None = Field(None, description='Vehicle length.')
+
+
 class Mmr(BaseModel):
     found: bool | None = Field(
         None,
@@ -154,6 +160,30 @@ class Mmr(BaseModel):
     frameTooltips: list[str] | None = Field(
         None,
         description='A list of hints that help improve recognition accuracy. (*Available since version 1.4.*)',
+    )
+    standardColorName: str | None = Field(
+        None,
+        description="The vehicle's color mapped to a standardized color name. (*Available since version 1.4.2.*)",
+    )
+    dimensions: Dimensions | None = Field(
+        None,
+        description='The physical dimensions of the recognized vehicle model. (*Available since version 1.4.2.*)',
+    )
+    generation: str | None = Field(
+        None,
+        description='The vehicle model generation. (*Available since version 1.4.1.*)',
+    )
+    generationConfidence: conint(ge=0, le=100) | None = Field(
+        None,
+        description='The confidence level of vehicle generation recognition. (*Available since version 1.4.1.*)',
+    )
+    variation: str | None = Field(
+        None,
+        description='The vehicle model variation. (*Available since version 1.4.1.*)',
+    )
+    variationConfidence: conint(ge=0, le=100) | None = Field(
+        None,
+        description='The confidence level of vehicle variation recognition. (*Available since version 1.4.1.*)',
     )
 
 

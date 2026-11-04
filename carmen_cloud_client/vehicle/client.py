@@ -11,7 +11,7 @@ from .options import VehicleAPIOptions, CloudServiceRegion
 from .response import VehicleApiResponse
 
 class VehicleAPIClient:
-    supported_api_version: str = "1.4.1"
+    supported_api_version: str = "1.4.2"
 
     def __init__(self, options: VehicleAPIOptions):
         self.options = options
