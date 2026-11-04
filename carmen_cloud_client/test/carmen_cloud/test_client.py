@@ -151,6 +151,16 @@ def test_list_all_api_keys():
 
 
 @responses.activate
+def test_api_key_roles_outside_documented_enum():
+    # The API returns roles the spec does not list (e.g. a lowercase legacy `owner`).
+    key = {"workspaceId": "ws-1", "name": "n", "value": "v", "apiKeyId": "a"}
+    responses.post(f"{BASE}/auth/token", json=token())
+    responses.get(f"{BASE}/workspace/ws-1/apikey",
+                  json={"list": [{**key, "role": "ADMIN"}, {**key, "role": "owner"}], "lastKey": None})
+    assert [k.role for k in client().api_keys.list().list_] == ["ADMIN", "owner"]
+
+
+@responses.activate
 def test_request_bodies():
     responses.post(f"{BASE}/auth/token", json=token())
     responses.post(f"{BASE}/workspace/ws-1/apikey", match=[matchers.json_params_matcher({"name": "ci", "role": "EDITOR"})],

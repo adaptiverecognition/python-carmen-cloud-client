@@ -9,12 +9,6 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 
-class Role(Enum):
-    ADMIN = 'ADMIN'
-    EDITOR = 'EDITOR'
-    ACCOUNTANT = 'ACCOUNTANT'
-
-
 class Apis(BaseModel):
     model_config = ConfigDict(
         extra='allow',
@@ -50,9 +44,9 @@ class ApiKey(BaseModel):
     value: str = Field(
         ..., description='The secret API key value (send as `x-api-key`).'
     )
-    role: Role | None = Field(
+    role: str | None = Field(
         None,
-        description='Workspace-management role of the key, when it may call the workspace API itself.',
+        description='Workspace-management role of the key, when it may call the workspace API itself. Known values: `ADMIN`, `EDITOR`, `ACCOUNTANT`; others may appear.',
     )
     products: dict[str, Products] | None = Field(
         None, description='Product access per product id (`carmen`, `freeflow`, `pr`).'
@@ -217,6 +211,12 @@ class BillingProfileRequest(BaseModel):
     )
 
 
+class Role(Enum):
+    ADMIN = 'ADMIN'
+    EDITOR = 'EDITOR'
+    ACCOUNTANT = 'ACCOUNTANT'
+
+
 class Products1(BaseModel):
     model_config = ConfigDict(
         extra='allow',
@@ -321,7 +321,10 @@ class InvitationSentResult(BaseModel):
     )
     workspaceId: str = Field(..., description='The workspace.')
     email: str = Field(..., description='The invited email address.')
-    role: Role = Field(..., description='The offered role.')
+    role: str = Field(
+        ...,
+        description='The offered role. Known values: `ADMIN`, `EDITOR`, `ACCOUNTANT`; others may appear.',
+    )
     status: Status1 = Field(..., description='Always `pending`.')
     message: str = Field(..., description='Human-readable confirmation.')
 
@@ -784,13 +787,6 @@ class WorkspaceNameRequest(BaseModel):
     name: str = Field(..., description='The workspace display name.')
 
 
-class Role6(Enum):
-    OWNER = 'OWNER'
-    ADMIN = 'ADMIN'
-    EDITOR = 'EDITOR'
-    ACCOUNTANT = 'ACCOUNTANT'
-
-
 class Status3(Enum):
     active = 'active'
     pending = 'pending'
@@ -807,7 +803,10 @@ class WorkspaceUser(BaseModel):
         description='Cognito user id (a placeholder id while the invitation is pending).',
     )
     email: str | None = Field(None, description='Email address.')
-    role: Role6 = Field(..., description='Role in the workspace.')
+    role: str = Field(
+        ...,
+        description='Role in the workspace. Known values: `OWNER`, `ADMIN`, `EDITOR`, `ACCOUNTANT`; others may appear.',
+    )
     status: Status3 = Field(..., description='Membership state.')
     createdAt: float | None = Field(
         None, description='Invitation time, epoch milliseconds.'
