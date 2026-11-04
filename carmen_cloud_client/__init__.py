@@ -13,21 +13,8 @@ from .vehicle import (
     VehicleAPIOptions,
     VehicleApiResponse,
 )
-from .storage_and_hook import (
-    APIName,
-    Apis,
-    CreateHookRequest,
-    EventFilters,
-    EventsResponse,
-    Hook,
-    StorageAndHookAPIClient,
-    StorageAndHookAPIOptions,
-    StorageStatusRequest,
-    StorageStatusResponse,
-    UpdateHookRequest,
-)
 
 from .models import CloudServiceRegion
-from .errors import CarmenAPIConfigError, InvalidImageError
+from .errors import CarmenAPIConfigError, CarmenAPIError, InvalidImageError
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"

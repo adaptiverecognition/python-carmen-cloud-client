@@ -4,24 +4,44 @@ build-backend = "hatchling.build"
 
 [project]
 name = "carmen_cloud_client"
-version = "1.3.1"
+version = "2.0.0"
 authors = [
   { name="Botond BALÁZS", email="botond.balazs@arip.hu" },
 ]
-description = "Python client for Carmen Cloud by Adaptive Recognition. Efficiently read license plates, recognize vehicle details, and process container, railway wagon, and US DOT codes."
+description = "Python client for Carmen Cloud by Adaptive Recognition: the Vehicle API (license plates, make and model, ADR), the Transportation & Cargo API (container, railway wagon and US DOT codes), and the Carmen Cloud API (workspaces, API keys, billing, usage, events, storage and hooks)."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
+license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "requests>=2.31.0",
+    "requests>=2.32.4",
     "requests_toolbelt>=1.0.0",
-    "pydantic>=1.10.9",
-    "urllib3>=2.0.3",
+    "pydantic>=2.6",
+    "urllib3>=2.5.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "datamodel-code-generator>=0.30",
+    "packaging",
+    "pytest>=8",
+    "python-dotenv>=1.0",
+    "responses>=0.25",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/carmen_cloud_client/test", "/assets", "/.github", "/Dockerfile"]
+
+[tool.hatch.build.targets.wheel]
+exclude = ["/carmen_cloud_client/test"]
 
 [project.urls]
 "Homepage" = "https://github.com/adaptiverecognition/python-carmen-cloud-client"
