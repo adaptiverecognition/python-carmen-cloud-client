@@ -1,13 +1,12 @@
 import os
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 from typing import List, Union
 from io import BytesIO
 from requests.exceptions import RetryError
 from urllib.parse import urljoin
-from carmen_cloud_client.errors import CarmenAPIConfigError, InvalidImageError
+from carmen_cloud_client._http import create_session, raise_for_status, select_api_base_url
+from carmen_cloud_client.errors import CarmenAPIConfigError, CarmenAPIError, InvalidImageError
 from .options import TransportAPIOptions
 from .response import TransportationCargoApiResponse
 
@@ -53,24 +52,16 @@ class TransportAPIClient:
         form_data = self.create_form_data(list(image_data_or_paths))
         headers = self.create_headers(form_data.content_type)
 
-        session = requests.Session()
-        retry_strategy = Retry(
-            total=3,
-            status_forcelist=[429, 500, 502, 503, 504],
-            allowed_methods=["HEAD", "GET", "OPTIONS", "POST"],
-            backoff_factor=1
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        session.mount("https://", adapter)
+        session = create_session(self.options.retry_count, retry_post=True)
 
         response = None
         try:
             response = session.post(self.api_url, headers=headers, data=form_data)
-            response.raise_for_status()
+            raise_for_status(response)
         except RetryError as e:
-            raise CarmenAPIConfigError(f"Failed to send request after {self.options.retry_count} retries: {e}")
+            raise CarmenAPIError(f"Failed to send request after {self.options.retry_count} retries: {e}")
 
-        return TransportationCargoApiResponse.parse_obj(response.json())
+        return TransportationCargoApiResponse.model_validate(response.json())
 
     def validate_options(self):
         if self.options.max_reads is not None and self.options.max_reads < 1:
@@ -117,16 +108,5 @@ class TransportAPIClient:
         return MultipartEncoder(fields=fields)
 
     def get_parametrized_api_url(self) -> str:
-        base_url = self.select_api_base_url()
+        base_url = select_api_base_url(self.options.endpoint, self.options.cloud_service_region)
         return urljoin(base_url, f"/transport/{self.options.type.value}")
-
-    def select_api_base_url(self) -> str:
-        if self.options.endpoint:
-            return self.options.endpoint
-        if self.options.cloud_service_region == "EU":
-            return "https://eu-central-1.api.carmencloud.com"
-        if self.options.cloud_service_region == "US":
-            return "https://us-east-1.api.carmencloud.com"
-        if self.options.cloud_service_region == "AUTO" or self.options.cloud_service_region is None:
-            return "https://api.carmencloud.com" # latency-based routing
-        raise CarmenAPIConfigError(f"Invalid 'cloud_service_region': '{self.options.cloud_service_region}'.")

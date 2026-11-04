@@ -28,14 +28,16 @@ class InvalidImageError(Exception):
 
 class CarmenAPIError(Exception):
     """
-    Exception raised when an API call fails after the configured number of retries.
-
-    Args:
-        message (str): The error message.
+    Exception raised when an API call fails: a non-2xx response, or a request
+    that still fails after the configured number of retries.
 
     Attributes:
         name (str): The name of the exception.
+        status (Optional[int]): The HTTP status code, when the API responded.
+        body: The parsed response body, when the API responded.
     """
-    def __init__(self, message):
+    def __init__(self, message, status=None, body=None):
         super().__init__(message)
         self.name = "CarmenAPIError"
+        self.status = status
+        self.body = body

@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
+# Regenerates the pydantic (v2) models from the JSON schemas / OpenAPI documents in assets/.
+set -euo pipefail
+common=(--output-model-type pydantic_v2.BaseModel --target-python-version 3.10 --disable-timestamp --use-standard-collections --formatters black isort --strict-nullable)
 
-datamodel-codegen --input-file-type jsonschema --input assets/transport/response.schema.json --output carmen_cloud_client/transport/response.py
-datamodel-codegen --input-file-type jsonschema --input assets/vehicle/response.schema.json --output carmen_cloud_client/vehicle/response.py
-
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/APIStorageStatusRequest.schema.json --output carmen_cloud_client/storage_and_hook/api_storage_status_request.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/CreateHookRequest.schema.json --output carmen_cloud_client/storage_and_hook/create_hook_request.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/EventsResponse.schema.json --output carmen_cloud_client/storage_and_hook/events_response.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/Hook.schema.json --output carmen_cloud_client/storage_and_hook/hook.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/Hooks.schema.json --output carmen_cloud_client/storage_and_hook/hooks.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/OKResponse.schema.json --output carmen_cloud_client/storage_and_hook/ok_response.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/StorageStatusResponse.schema.json --output carmen_cloud_client/storage_and_hook/storage_status_response.py
-datamodel-codegen --input-file-type jsonschema --input assets/storage-and-hook/UpdateHookRequest.schema.json --output carmen_cloud_client/storage_and_hook/update_hook_request.py
+datamodel-codegen "${common[@]}" --input-file-type jsonschema --input assets/transport/response.schema.json --output carmen_cloud_client/transport/response.py
+datamodel-codegen "${common[@]}" --input-file-type jsonschema --input assets/vehicle/response.schema.json --output carmen_cloud_client/vehicle/response.py
+datamodel-codegen "${common[@]}" --input-file-type openapi --input assets/carmen-cloud/carmen-cloud.json --output carmen_cloud_client/carmen_cloud/models.py --extra-fields allow
+datamodel-codegen "${common[@]}" --input-file-type openapi --input assets/carmen-cloud/authentication.json --output carmen_cloud_client/auth/models.py --extra-fields allow
