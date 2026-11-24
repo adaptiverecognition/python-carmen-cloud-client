@@ -1,38 +1,50 @@
-name: Python project CI
+name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, develop]
   pull_request:
-    branches: [ master ]
+  # The live suites call the recognition APIs. The dev APIs only accept the
+  # office LAN (WAF AR-EU-DEV-API-ACL), so GitHub-hosted runners can't reach
+  # them: the live job runs on demand, against prod with the test-workspace
+  # keys.
+  workflow_dispatch:
+    inputs:
+      endpoint:
+        description: API base URL for the live suites
+        default: https://api.carmencloud.com
 
-env:
-  TEST_DEV_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_DEV }}
-  TEST_EU_PROD_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_PROD }}
-  TEST_US_PROD_API_KEY: ${{ secrets.API_TEST_US_API_KEY_PROD }}
-  TEST_DEV_ENDPOINT_URL: ${{ secrets.TEST_DEV_ENDPOINT_URL }}
+permissions:
+  contents: read
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      # No TEST_DEV_API_KEY here, so conftest.py skips the live tests.
+      - run: pytest
+      - run: pip install build && python -m build
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-
-    - name: Set up Environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements-dev.txt
-        pytest
-
-    # - name: Run tests
-    #   shell: bash -l {0}
-    #   run: |
-    #     echo "Running tests"
+  live:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      TEST_DEV_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_PROD }}
+      TEST_DEV_ENDPOINT_URL: ${{ inputs.endpoint }}
+      TEST_EU_PROD_API_KEY: ${{ secrets.API_TEST_EU_API_KEY_PROD }}
+      TEST_US_PROD_API_KEY: ${{ secrets.API_TEST_US_API_KEY_PROD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - run: pytest
