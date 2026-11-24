@@ -83,6 +83,9 @@ class TransportAPIClient:
         }
         if self.options.disable_iso_code:
             headers["x-disable-iso-code"] = "true"
+        # Sent whenever set: an explicit False overrides disable_iso_code.
+        if self.options.disable_additional_code is not None:
+            headers["x-disable-additional-code"] = "true" if self.options.disable_additional_code else "false"
         if self.options.disable_checksum_check:
             headers["x-disable-checksum-check"] = "true"
         if self.options.enable_full_us_accr_code:
