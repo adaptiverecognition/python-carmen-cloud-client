@@ -20,4 +20,4 @@ from .carmen_cloud import CarmenCloudClient, CarmenCloudClientOptions
 from .models import CloudServiceRegion
 from .errors import CarmenAPIConfigError, CarmenAPIError, InvalidImageError
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
